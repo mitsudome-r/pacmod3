@@ -1,14 +1,28 @@
 version: 2
 jobs:
-  indigo:
+  dbc_validation:
     docker:
-      - image: ros:indigo-ros-core
+      - image: circleci/python:latest
     steps:
       - checkout
       - run:
           name: Set Up Container
           command: |
-            apt-get update && apt-get install openssh-client python-catkin-tools build-essential -y
+            pip install --user cantools
+      - run:
+          name: Validate DBC
+          command: |
+            /home/circleci/.local/bin/cantools dump dbc/as_pacmod_*.dbc
+
+  indigo:
+    docker:
+      - image: autonomoustuff/docker-builds:indigo-ros-base
+    steps:
+      - checkout
+      - run:
+          name: Set Up Container
+          command: |
+            apt-get update -qq
             source `find /opt/ros -name setup.bash | sort | head -1`
             rosdep install --from-paths . --ignore-src -y
             cd ..
@@ -28,13 +42,13 @@ jobs:
 
   kinetic:
     docker:
-      - image: ros:kinetic-ros-core
+      - image: autonomoustuff/docker-builds:kinetic-ros-base
     steps:
       - checkout
       - run:
           name: Set Up Container
           command: |
-            apt-get update && apt-get install openssh-client python-catkin-tools build-essential -y
+            apt-get update -qq
             source `find /opt/ros -name setup.bash | sort | head -1`
             rosdep install --from-paths . --ignore-src -y
             cd ..
@@ -54,13 +68,13 @@ jobs:
 
   lunar:
     docker:
-      - image: ros:lunar-ros-core
+      - image: autonomoustuff/docker-builds:lunar-ros-base
     steps:
       - checkout
       - run:
           name: Set Up Container
           command: |
-            apt-get update && apt-get install openssh-client python-catkin-tools build-essential -y
+            apt-get update -qq
             source `find /opt/ros -name setup.bash | sort | head -1`
             rosdep install --from-paths . --ignore-src -y
             cd ..
@@ -80,13 +94,13 @@ jobs:
 
   melodic:
     docker:
-      - image: ros:melodic-ros-core
+      - image: autonomoustuff/docker-builds:melodic-ros-base
     steps:
       - checkout
       - run:
           name: Set Up Container
           command: |
-            apt-get update && apt-get install openssh-client python-catkin-tools build-essential -y
+            apt-get update -qq
             source `find /opt/ros -name setup.bash | sort | head -1`
             rosdep install --from-paths . --ignore-src -y
             cd ..
@@ -108,7 +122,16 @@ workflows:
   version: 2
   ros_build:
     jobs:
-      - indigo
-      - kinetic
-      - lunar
-      - melodic
+      - dbc_validation
+      - indigo:
+          requires:
+            - dbc_validation
+      - kinetic:
+          requires:
+            - dbc_validation
+      - lunar:
+          requires:
+            - dbc_validation
+      - melodic:
+          requires:
+            - dbc_validation
