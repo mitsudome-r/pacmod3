@@ -341,6 +341,10 @@ int main(int argc, char *argv[])
       veh_type = VEHICLE_4;
     else if (veh_type_string == "VEHICLE_5")
       veh_type = VEHICLE_5;
+    else if (veh_type_string == "VEHICLE_6")
+      veh_type = VEHICLE_6;
+    else if (veh_type_string == "VEHICLE_7")
+      veh_type = VEHICLE_7;
     else
     {
       veh_type = VehicleType::POLARIS_GEM;
@@ -471,6 +475,31 @@ int main(int argc, char *argv[])
     rx_list.insert(std::make_pair(HornCmdMsg::CAN_ID, horn_data));
   }
 
+  if (veh_type == VehicleType::VEHICLE_7)
+  {
+    headlight_rpt_pub = n.advertise<pacmod_msgs::SystemRptInt>("parsed_tx/headlight_rpt", 20);
+    horn_rpt_pub = n.advertise<pacmod_msgs::SystemRptBool>("parsed_tx/horn_rpt", 20);
+    parking_brake_rpt_pub = n.advertise<pacmod_msgs::SystemRptBool>("parsed_tx/parking_brake_status_rpt", 20);
+    wheel_speed_rpt_pub = n.advertise<pacmod_msgs::WheelSpeedRpt>("parsed_tx/wheel_speed_rpt", 20);
+    yaw_rate_rpt_pub = n.advertise<pacmod_msgs::YawRateRpt>("parsed_tx/yaw_rate_rpt", 20);
+    headlight_aux_rpt_pub = n.advertise<pacmod_msgs::HeadlightAuxRpt>("parsed_tx/headlight_aux_rpt", 20);
+
+    pub_tx_list.insert(std::make_pair(HeadlightRptMsg::CAN_ID, headlight_rpt_pub));
+    pub_tx_list.insert(std::make_pair(HornRptMsg::CAN_ID, horn_rpt_pub));
+    pub_tx_list.insert(std::make_pair(ParkingBrakeRptMsg::CAN_ID, parking_brake_rpt_pub));
+    pub_tx_list.insert(std::make_pair(WheelSpeedRptMsg::CAN_ID, wheel_speed_rpt_pub));
+    pub_tx_list.insert(std::make_pair(YawRateRptMsg::CAN_ID, yaw_rate_rpt_pub));
+    pub_tx_list.insert(std::make_pair(HeadlightAuxRptMsg::CAN_ID, headlight_aux_rpt_pub));
+
+    headlight_set_cmd_sub = std::shared_ptr<ros::Subscriber>(new ros::Subscriber(n.subscribe("as_rx/headlight_cmd", 20, callback_headlight_set_cmd)));
+    horn_set_cmd_sub = std::shared_ptr<ros::Subscriber>(new ros::Subscriber(n.subscribe("as_rx/horn_cmd", 20, callback_horn_set_cmd)));
+
+    std::shared_ptr<LockedData> headlight_data(new LockedData);
+    std::shared_ptr<LockedData> horn_data(new LockedData);
+
+    rx_list.insert(std::make_pair(HeadlightCmdMsg::CAN_ID, headlight_data));
+    rx_list.insert(std::make_pair(HornCmdMsg::CAN_ID, horn_data));
+  }
   if (veh_type == VehicleType::VEHICLE_4)
   {
     detected_object_rpt_pub = n.advertise<pacmod_msgs::DetectedObjectRpt>("parsed_tx/detected_object_rpt", 20);

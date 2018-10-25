@@ -5,9 +5,9 @@
        POLARIS_RANGER: The Polaris Ranger series of off-road vehicles.
        INTERNATIONAL_PROSTAR_122: The International PROSTAR+ 122 semi-tractor trailer.
        LEXUS_RX_450H: The hybrid version of the Lexus RX-450 SUV. -->
-  <arg name="pacmod_vehicle_type" default="POLARIS_GEM" />
+  <arg name="pacmod_vehicle_type" default="VEHICLE_7" />
   <arg name="use_kvaser" default="false" />
-  <arg name="kvaser_hardware_id" default="27733" />
+  <arg name="kvaser_hardware_id" default="43029" />
   <arg name="kvaser_circuit_id" default="0" />
   <arg name="use_socketcan" default="false" />
   <arg name="socketcan_device" default="can0" />
