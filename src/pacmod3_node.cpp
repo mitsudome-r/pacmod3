@@ -59,6 +59,7 @@ ros::Publisher occupancy_rpt_pub;
 ros::Publisher interior_lights_rpt_pub;
 ros::Publisher door_rpt_pub;
 ros::Publisher rear_lights_rpt_pub;
+ros::Publisher hazard_rpt_pub;
 
 // Advertise published messages
 ros::Publisher global_rpt_pub;
@@ -347,6 +348,8 @@ int main(int argc, char *argv[])
       veh_type = VEHICLE_5;
     else if (veh_type_string == "VEHICLE_6")
       veh_type = VEHICLE_6;
+    else if (veh_type_string == "VEHICLE_9")
+      veh_type = VEHICLE_9;
     else
     {
       veh_type = VehicleType::POLARIS_GEM;
@@ -546,6 +549,13 @@ int main(int argc, char *argv[])
     // rx_list.insert(std::make_pair(DashControlsRightCmdMsg::CAN_ID, dash_controls_right_data));
     // rx_list.insert(std::make_pair(MediaControlsCmdMsg::CAN_ID, media_controls_data));
   }
+
+  if(veh_type == VEHICLE_9)
+  {
+    hazard_rpt_pub = n.advertize(pacmod_msgs::SystemRptBool>("parsed_tx/hazards_rpt", 20));
+    pub_tx_list.insert(std::make_pair(HazardLightRptMsg::CAN_ID, hazards_rpt_pub));
+  }
+
 
   // Initialize rx_list with all 0s
   for (auto rx_it = rx_list.begin(); rx_it != rx_list.end(); rx_it++)

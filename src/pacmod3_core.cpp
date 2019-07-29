@@ -217,6 +217,9 @@ std::shared_ptr<Pacmod3TxMsg> Pacmod3TxMsg::make_message(const uint32_t& can_id)
   case WiperAuxRptMsg::CAN_ID:
     return std::shared_ptr<Pacmod3TxMsg>(new WiperAuxRptMsg);
     break;
+  case HazardLightRptMsg::CAN_ID:
+    return std::shared_ptr<Pacmod3TxMsg>(new HazardLightRptMsg);
+    break;
   default:
     return NULL;
   }
