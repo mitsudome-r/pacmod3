@@ -552,8 +552,8 @@ int main(int argc, char *argv[])
 
   if(veh_type == VEHICLE_9)
   {
-    hazard_rpt_pub = n.advertize(pacmod_msgs::SystemRptBool>("parsed_tx/hazards_rpt", 20));
-    pub_tx_list.insert(std::make_pair(HazardLightRptMsg::CAN_ID, hazards_rpt_pub));
+    hazard_rpt_pub = n.advertise<pacmod_msgs::SystemRptBool>("parsed_tx/hazards_rpt", 20));
+    pub_tx_list.insert(std::make_pair(HazardLightRptMsg::CAN_ID, hazard_rpt_pub));
   }
 
 
