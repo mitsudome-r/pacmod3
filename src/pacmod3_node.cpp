@@ -420,7 +420,8 @@ int main(int argc, char *argv[])
 
   if (veh_type == VehicleType::POLARIS_GEM ||
       veh_type == VehicleType::POLARIS_RANGER ||
-      veh_type == VehicleType::INTERNATIONAL_PROSTAR_122)
+      veh_type == VehicleType::INTERNATIONAL_PROSTAR_122 ||
+      veh_type == VehicleType::VEHICLE_9)
   {
     brake_rpt_detail_1_pub = n.advertise<pacmod_msgs::MotorRpt1>("parsed_tx/brake_rpt_detail_1", 20);
     brake_rpt_detail_2_pub = n.advertise<pacmod_msgs::MotorRpt2>("parsed_tx/brake_rpt_detail_2", 20);
@@ -454,7 +455,8 @@ int main(int argc, char *argv[])
 
   if (veh_type == VehicleType::LEXUS_RX_450H ||
       veh_type == VehicleType::VEHICLE_5 ||
-      veh_type == VehicleType::VEHICLE_6)
+      veh_type == VehicleType::VEHICLE_6 ||
+      veh_type == VehicleType::VEHICLE_9)
   {
     date_time_rpt_pub = n.advertise<pacmod_msgs::DateTimeRpt>("parsed_tx/date_time_rpt", 20);
     headlight_rpt_pub = n.advertise<pacmod_msgs::SystemRptInt>("parsed_tx/headlight_rpt", 20);
@@ -550,7 +552,7 @@ int main(int argc, char *argv[])
     // rx_list.insert(std::make_pair(MediaControlsCmdMsg::CAN_ID, media_controls_data));
   }
 
-  if (veh_type == VEHICLE_9)
+  if (veh_type == VehicleType::VEHICLE_9)
   {
     hazard_rpt_pub = n.advertise<pacmod_msgs::SystemRptBool>("parsed_tx/hazards_rpt", 20);
     pub_tx_list.insert(std::make_pair(HazardLightRptMsg::CAN_ID, hazard_rpt_pub));
