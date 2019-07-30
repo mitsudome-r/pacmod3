@@ -205,6 +205,11 @@ void callback_turn_signal_set_cmd(const pacmod_msgs::SystemCmdInt::ConstPtr& msg
   lookup_and_encode(TurnSignalCmdMsg::CAN_ID, msg);
 }
 
+void callback_hazards_set_cmd(const pacmod_msgs::SystemCmdInt::ConstPtr& msg)
+{
+  lookup_and_encode(HazardLightCmdMsg::CAN_ID, msg);
+}
+
 // Listens for incoming requests to change the state of the windshield wipers
 void callback_wiper_set_cmd(const pacmod_msgs::SystemCmdInt::ConstPtr& msg)
 {
@@ -404,6 +409,7 @@ int main(int argc, char *argv[])
   ros::Subscriber shift_cmd_sub = n.subscribe("as_rx/shift_cmd", 20, callback_shift_set_cmd);
   ros::Subscriber steer_cmd_sub = n.subscribe("as_rx/steer_cmd", 20, callback_steer_cmd_sub);
   ros::Subscriber turn_cmd_sub = n.subscribe("as_rx/turn_cmd", 20, callback_turn_signal_set_cmd);
+  ros::Subscriber hazards_cmd_sub = n.subscribe("as_rx/hazards_cmd", 20, callback_hazard_set_cmd);
 
   // Populate rx list
   std::shared_ptr<LockedData> accel_data(new LockedData);
