@@ -319,8 +319,8 @@ int main(int argc, char *argv[])
   ros::NodeHandle n;
   ros::NodeHandle priv("~");
   ros::Rate loop_rate(30);  // PACMod3 is sending at ~30Hz.
-  std::string veh_type_string = "POLARIS_GEM";
-  VehicleType veh_type = VehicleType::POLARIS_GEM;
+  std::string veh_type_string = "VEHICLE_9";
+  VehicleType veh_type = VehicleType::VEHICLE_9;
 
   // Vehicle-Specific Subscribers
   std::shared_ptr<ros::Subscriber> wiper_set_cmd_sub,
@@ -417,12 +417,14 @@ int main(int argc, char *argv[])
   std::shared_ptr<LockedData> shift_data(new LockedData);
   std::shared_ptr<LockedData> steer_data(new LockedData);
   std::shared_ptr<LockedData> turn_data(new LockedData);
+  std::shared_ptr<LockedData> hazard_data(new LockedData);
 
   rx_list.insert(std::make_pair(AccelCmdMsg::CAN_ID, accel_data));
   rx_list.insert(std::make_pair(BrakeCmdMsg::CAN_ID, brake_data));
   rx_list.insert(std::make_pair(ShiftCmdMsg::CAN_ID, shift_data));
   rx_list.insert(std::make_pair(SteerCmdMsg::CAN_ID, steer_data));
   rx_list.insert(std::make_pair(TurnSignalCmdMsg::CAN_ID, turn_data));
+  rx_list.insert(std::make_pair(HazardLightCmdMsg::CAN_ID, hazard_data));
 
   if (veh_type == VehicleType::POLARIS_GEM ||
       veh_type == VehicleType::POLARIS_RANGER ||
@@ -461,8 +463,7 @@ int main(int argc, char *argv[])
 
   if (veh_type == VehicleType::LEXUS_RX_450H ||
       veh_type == VehicleType::VEHICLE_5 ||
-      veh_type == VehicleType::VEHICLE_6 ||
-      veh_type == VehicleType::VEHICLE_9)
+      veh_type == VehicleType::VEHICLE_6)
   {
     date_time_rpt_pub = n.advertise<pacmod_msgs::DateTimeRpt>("parsed_tx/date_time_rpt", 20);
     headlight_rpt_pub = n.advertise<pacmod_msgs::SystemRptInt>("parsed_tx/headlight_rpt", 20);
@@ -558,13 +559,6 @@ int main(int argc, char *argv[])
     // rx_list.insert(std::make_pair(MediaControlsCmdMsg::CAN_ID, media_controls_data));
   }
 
-  if (veh_type == VehicleType::VEHICLE_9)
-  {
-    hazard_rpt_pub = n.advertise<pacmod_msgs::SystemRptBool>("parsed_tx/hazards_rpt", 20);
-    pub_tx_list.insert(std::make_pair(HazardLightRptMsg::CAN_ID, hazard_rpt_pub));
-  }
-
-
   // Initialize rx_list with all 0s
   for (auto rx_it = rx_list.begin(); rx_it != rx_list.end(); rx_it++)
   {
@@ -627,6 +621,8 @@ int main(int argc, char *argv[])
         kvp.key = "Turn Signals";
       else if (system->first == WiperRptMsg::CAN_ID)
         kvp.key = "Wipers";
+      else if (system->first == HazardLightRptMsg::CAN_ID)
+        kvp.key = "Hazards";
 
       kvp.value = std::get<0>(system->second) ? "True" : "False";
 

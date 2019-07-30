@@ -962,6 +962,17 @@ std::vector<uint8_t> Pacmod3RxRosMsgHandler::unpackAndEncode(
                    msg->command);
     return encoder.data;
   }
+  else if (can_id == HazardLightCmdMsg::CAN_ID)
+  {
+    HazardLightCmdMsg encoder;
+    encoder.encode(msg->enable,
+                   msg->ignore_overrides,
+                   msg->clear_override,
+                   msg->clear_faults,
+                   msg->command);
+    return encoder.data;
+  }
+
   else if (can_id == WiperCmdMsg::CAN_ID)
   {
     WiperCmdMsg encoder;
@@ -987,6 +998,7 @@ std::vector<uint8_t> Pacmod3RxRosMsgHandler::unpackAndEncode(
   if (can_id == SteerCmdMsg::CAN_ID)
   {
     SteerCmdMsg encoder;
+    ROS_WARN("RECEIVED Steer Command");
     encoder.encode(msg->enable,
                    msg->ignore_overrides,
                    msg->clear_override,
