@@ -20,34 +20,72 @@
 
 import launch.actions
 import launch.substitutions
+from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
+    bridge_params_file = DeclareLaunchArgument(
+        'bridge_params',
+        default_value=[launch.substitutions.ThisLaunchFileDir(),
+                       '/bridge_params.yaml'])
+    pacmod_params_file = DeclareLaunchArgument(
+        'pacmod_params',
+        default_value=[launch.substitutions.ThisLaunchFileDir(),
+                       '/driver_params.yaml'])
+
     container = ComposableNodeContainer(
-        node_name='pacmod3_with_kvaser',
-        node_namespace='/pacmod',
+        name='pacmod3_with_kvaser',
+        namespace='/pacmod',
         package='rclcpp_components',
-        node_executable='component_container',
+        executable='component_container',
         composable_node_descriptions=[
             ComposableNode(
                 package='kvaser_interface',
-                node_plugin='kvaser_interface::KvaserReaderNode',
-                node_name='kvaser_reader',
-                node_namespace='/pacmod'),
+                plugin='kvaser_interface::KvaserReaderNode',
+                name='kvaser_reader',
+                namespace='/pacmod',
+                parameters=[{
+                    'hardware_id': 65359,
+                    'circuit_id': 0,
+                    'bit_rate': 500000,
+                    'enable_echo': True,
+                }]),
             ComposableNode(
                 package='kvaser_interface',
-                node_plugin='kvaser_interface::KvaserWriterNode',
-                node_name='kvaser_writer',
-                node_namespace='/pacmod'),
+                plugin='kvaser_interface::KvaserWriterNode',
+                name='kvaser_writer',
+                namespace='/pacmod',
+                parameters=[{
+                    'hardware_id': 65359,
+                    'circuit_id': 0,
+                    'bit_rate': 500000,
+                    'enable_echo': True,
+                }]),
             ComposableNode(
                 package='pacmod3',
-                node_plugin='pacmod3::PACMod3Node',
-                node_name='pacmod3_driver',
-                node_namespace='/pacmod')
+                plugin='pacmod3::PACMod3Node',
+                name='pacmod3_driver',
+                namespace='/pacmod',
+                parameters=[{
+                    'vehicle_type': "LEXUS_RX_450H",
+                    'frame_id': "pacmod",
+                }]
+            )
         ],
         output='screen',
     )
 
-    return launch.LaunchDescription([container])
+    log_info = LogInfo(
+        msg=["bridge_params = ", LaunchConfiguration('bridge_params')])
+    log_info2 = LogInfo(
+        msg=["pacmod_params = ", LaunchConfiguration('pacmod_params')])
+
+    return launch.LaunchDescription([
+        bridge_params_file,
+        pacmod_params_file,
+        log_info,
+        log_info2,
+        container])
