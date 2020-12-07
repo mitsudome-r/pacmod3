@@ -36,6 +36,9 @@ def generate_launch_description():
             package='pacmod3',
             node_executable='pacmod3_driver',
             output='screen',
-            node_namespace='pacmod',
-            parameters=[params_file]),
+            node_namespace='',
+            parameters=[{
+                'vehicle_type': "LEXUS_RX_450H",
+                'frame_id': "pacmod",
+            }])
     ])

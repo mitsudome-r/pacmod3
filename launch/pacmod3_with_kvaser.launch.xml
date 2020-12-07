@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <group>
+        <push-ros-namespace namespace="pacmod"/>
+
+        <include file="$(find-pkg-share kvaser_interface)/launch/kvaser_bridge.py" />
+        <include file="$(find-pkg-share pacmod3)/launch/pacmod3_driver.py" />
+
+    </group>
+</launch>
